@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chatbot</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/addons/p5.sound.min.js"></script>
+  <script src="https://unpkg.com/rita"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+  <link rel="stylesheet" href="./component/reading.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel&Source+Serif+Pro:wght@200&display=swap"
+    rel="stylesheet" />
+  <style>
+    #iframe {
+      display: block;
+      width: 80%;
+      /* 让 iframe 占据父容器的全部宽度 */
+      height: 100%;
+      /* 固定高度，或者根据需要进行调整 */
+      /* border: none; */
+      /* 去除 iframe 边框 */
+      overflow: hidden;
+      opacity: 1;
+      visibility: visible;
+      /* 隐藏 */
+      transition: opacity 1.5s ease, transform 1.5s ease;
+      /* 添加过渡效果 */
+
+      transform: translateY(30px);
+      /* 初始向下位移 20px */
+    }
+
+    @keyframes fadeInLeft {
+      from {
+        opacity: 0;
+        transform: translate3d(-100%, 0, 0);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    #iframe.show {
+      scale: 1;
+      opacity: 1;
+      /* 完全显示 */
+      transform: translateY(0);
+      /* 归位 */
+      /* animation-duration: 1s;
+        animation-fill-mode: both;
+        animation-name: fadeInLeft; */
+    }
+
+    .iframe-container {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      display: none;
+      opacity: 0;
+      visibility: 1;
+      /* 显示 */
+      transition: opacity 1.5s ease;
+      /* 添加过渡效果 */
+    }
+
+    /* modal 样式 */
+    .modal-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 10;
+      display: none;
+      /* 默认隐藏 */
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      background: hsla(0, 0%, 40%, 0.6);
+    }
+
+    .modal-container {
+      opacity: 0;
+      /* 初始透明度为 0，隐藏 */
+      transform: translateY(-50px);
+      /* 初始向上位移 */
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      /* 设置动画过渡 */
+    }
+
+    .modal-container.show {
+      opacity: 1;
+      /* 最终透明度为 1，完全显示 */
+      transform: translateY(0);
+      /* 恢复原位 */
+    }
+
+    .modal-container:target {
+      display: flex;
+    }
+
+    .modal {
+      width: 60rem;
+      padding: 1rem 2rem;
+      border-radius: 0.8rem;
+      color: white;
+      background: linear-gradient(to right bottom,
+          hsl(236, 50%, 50%),
+          hsl(195, 50%, 50%));
+    }
+
+    .modal__btn,
+    .link-2 {
+      cursor: pointer;
+    }
+
+    .modal__btn,
+    .link-2 {
+      cursor: pointer;
+    }
+
+    .modal__details {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid hsla(0, 0%, 100%, 0.4);
+    }
+
+    .modal__title {
+      font-size: 2.2rem;
+    }
+
+    .modal__description {
+      margin-top: 2rem;
+
+      font-size: 1.6rem;
+      font-style: italic;
+    }
+
+    .modal__text {
+      padding: 0 4rem;
+      margin-bottom: 4rem;
+
+      font-size: 1.6rem;
+      line-height: 2;
+    }
+
+    .modal__text::before {
+      content: "";
+
+      position: absolute;
+      top: 0%;
+      left: 100%;
+      transform: translate(-50%, -50%);
+
+      width: 18rem;
+      height: 18rem;
+      border: 1px solid hsla(0, 0%, 100%, 0.2);
+      border-radius: 100rem;
+
+      pointer-events: none;
+    }
+
+    .modal__btn {
+      padding: 1rem 1.6rem;
+      border: 1px solid hsla(0, 0%, 100%, 0.4);
+      border-radius: 100rem;
+
+      color: inherit;
+      background: transparent;
+      font-size: 1.4rem;
+      font-family: inherit;
+      letter-spacing: 0.2rem;
+
+      transition: 0.2s;
+      cursor: pointer;
+    }
+
+    .modal__btn:hover,
+    .modal__btn:focus {
+      border-color: hsla(0, 0%, 100%, 0.6);
+      transform: translateY(-0.2rem);
+    }
+
+    .modal__gallery {
+      position: relative;
+      max-height: 60vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      justify-content: space-between;
+      padding: 2rem 0;
+    }
+
+    .modal__image-container {
+      flex: 1;
+
+      margin-right: 1rem;
+      text-align: center;
+    }
+
+    .modal__image-container:last-child {
+      margin-right: 0;
+    }
+
+    .modal__image {
+      width: 100%;
+      max-width: 200px;
+      height: auto;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .modal__caption {
+      font-size: 14px;
+      color: #dcd5d5;
+    }
+
+    .current-date {
+      position: absolute;
+      top: 0px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+    }
+
+    .modal__image-container:hover,
+    .modal__image-container:focus,
+    .modal__image-container:active {
+      transform: scale(1.1);
+      cursor: pointer;
+    }
+  </style>
+  <style>
+    #navbar {
+      z-index: 999999;
+      position: fixed;
+      top: 150px;
+      right: -10px;
+    }
+  </style>
+</head>
+
+<body>
+  <nav id="navbar">
+    <a href="./component/reading.html" class="button">The day of destiny</a>
+  </nav>
+  <audio id="audioElement" style="display: none"></audio>
+  <template id="modalTemplate">
+    <div class="modal-container">
+      <div class="modal test test-2">
+        <div class="modal__details">
+          <h3 class="modal__title">Historical record</h3>
+
+          <button class="modal__btn" id="downloadPDF">Export PDF</button>
+          <button class="modal__btn link-2">close</button>
+        </div>
+        <div class="modal__gallery test test-2">
+          <div class="modal__image-container">
+            <img src="image1.jpg" alt="Image 1" class="modal__image" />
+            <p class="modal__caption">这是第一张图片的注解。</p>
+          </div>
+          <div class="modal__image-container">
+            <img src="image2.jpg" alt="Image 2" class="modal__image" />
+            <p class="modal__caption">这是第二张图片的注解。</p>
+          </div>
+          <div class="modal__image-container">
+            <img src="image3.jpg" alt="Image 3" class="modal__image" />
+            <p class="modal__caption">这是第三张图片的注解。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+  <iframe src="./test.html" frameborder="0" id="iframe"></iframe>
+
+  <div class="toggle-cont">
+    <input class="toggle-input" id="toggle" name="toggle" type="checkbox" />
+    <label class="toggle-label" for="toggle">
+      <div class="cont-icon">
+        <span style="--width: 2; --deg: 25; --duration: 11" class="sparkle"></span>
+        <span style="--width: 1; --deg: 100; --duration: 18" class="sparkle"></span>
+        <span style="--width: 1; --deg: 280; --duration: 5" class="sparkle"></span>
+        <span style="--width: 2; --deg: 200; --duration: 3" class="sparkle"></span>
+        <span style="--width: 2; --deg: 30; --duration: 20" class="sparkle"></span>
+        <span style="--width: 2; --deg: 300; --duration: 9" class="sparkle"></span>
+        <span style="--width: 1; --deg: 250; --duration: 4" class="sparkle"></span>
+        <span style="--width: 2; --deg: 210; --duration: 8" class="sparkle"></span>
+        <span style="--width: 2; --deg: 100; --duration: 9" class="sparkle"></span>
+        <span style="--width: 1; --deg: 15; --duration: 13" class="sparkle"></span>
+        <span style="--width: 1; --deg: 75; --duration: 18" class="sparkle"></span>
+        <span style="--width: 2; --deg: 65; --duration: 6" class="sparkle"></span>
+        <span style="--width: 2; --deg: 50; --duration: 7" class="sparkle"></span>
+        <span style="--width: 1; --deg: 320; --duration: 5" class="sparkle"></span>
+        <span style="--width: 1; --deg: 220; --duration: 5" class="sparkle"></span>
+        <span style="--width: 1; --deg: 215; --duration: 2" class="sparkle"></span>
+        <span style="--width: 2; --deg: 135; --duration: 9" class="sparkle"></span>
+        <span style="--width: 2; --deg: 45; --duration: 4" class="sparkle"></span>
+        <span style="--width: 1; --deg: 78; --duration: 16" class="sparkle"></span>
+        <span style="--width: 1; --deg: 89; --duration: 19" class="sparkle"></span>
+        <span style="--width: 2; --deg: 65; --duration: 14" class="sparkle"></span>
+        <span style="--width: 2; --deg: 97; --duration: 1" class="sparkle"></span>
+        <span style="--width: 1; --deg: 174; --duration: 10" class="sparkle"></span>
+        <span style="--width: 1; --deg: 236; --duration: 5" class="sparkle"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 30 30" class="icon">
+          <path
+            d="M0.96233 28.61C1.36043 29.0081 1.96007 29.1255 2.47555 28.8971L10.4256 25.3552C13.2236 24.11 16.4254 24.1425 19.2107 25.4401L27.4152 29.2747C27.476 29.3044 27.5418 29.3023 27.6047 29.32C27.6563 29.3348 27.7079 29.3497 27.761 29.3574C27.843 29.3687 27.9194 29.3758 28 29.3688C28.1273 29.3617 28.2531 29.3405 28.3726 29.2945C28.4447 29.262 28.5162 29.2287 28.5749 29.1842C28.6399 29.1446 28.6993 29.0994 28.7509 29.0477L28.9008 28.8582C28.9468 28.7995 28.9793 28.7274 29.0112 28.656C29.0599 28.5322 29.0811 28.4036 29.0882 28.2734C29.0939 28.1957 29.0868 28.1207 29.0769 28.0415C29.0705 27.9955 29.0585 27.9524 29.0472 27.9072C29.0295 27.8343 29.0302 27.7601 28.9984 27.6901L25.1638 19.4855C23.8592 16.7073 23.8273 13.5048 25.0726 10.7068L28.6145 2.75679C28.8429 2.24131 28.7318 1.63531 28.3337 1.2372C27.9165 0.820011 27.271 0.721743 26.7491 0.9961L19.8357 4.59596C16.8418 6.15442 13.2879 6.18696 10.2615 4.70062L1.80308 0.520214C1.7055 0.474959 1.60722 0.441742 1.50964 0.421943C1.44459 0.409215 1.37882 0.395769 1.3074 0.402133C1.14406 0.395769 0.981436 0.428275 0.818095 0.499692C0.77284 0.519491 0.719805 0.545671 0.67455 0.578198C0.596061 0.617088 0.524653 0.675786 0.4596 0.74084C0.394546 0.805894 0.335843 0.877306 0.296245 0.956502C0.263718 1.00176 0.237561 1.05477 0.217762 1.10003C0.152708 1.24286 0.126545 1.40058 0.120181 1.54978C0.120181 1.61483 0.126527 1.6735 0.132891 1.73219C0.15269 1.85664 0.178881 1.97332 0.237571 2.08434L4.41798 10.5427C5.91139 13.5621 5.8725 17.1238 4.3204 20.1099L0.720514 27.0233C0.440499 27.5536 0.545137 28.1928 0.96233 28.61Z">
+          </path>
+        </svg>
+      </div>
+    </label>
+  </div>
+
+  <div class="container">
+    <div class="chatbox">
+      <!-- 添加加载指示器 -->
+      <div class="chatbox__support">
+        <div class="chatbox__header">
+          <div class="chatbox__image--header">
+            <img src="https://img.icons8.com/color/48/000000/circled-user-female-skin-type-5--v1.png" alt="User Icon" />
+          </div>
+          <div class="chatbox__content--header">
+            <h1></h1>
+            <h4 class="chatbox__heading--header">
+              Tarot's Echos: Reflecting Your Inner World
+              <div class="Lunar_eclipse" id="Lunar_eclipse"></div>
+            </h4>
+            <p class="chatbox__description--header">
+              Journey Through the Arcana
+            </p>
+          </div>
+        </div>
+
+        <div class="chatbox__messages"></div>
+        <div id="loading-indicator" class="loading-indicator" style="display: none">
+          <p>Loading...</p>
+        </div>
+        <div class="chatbox__footer">
+          <input id="message-input" type="text" autocomplete="off" placeholder="Write a message..." />
+          <button class="chatbox__send--footer send__button">Send</button>
+          <button id="voice-button" class="chatbox__voice--footer">🎤</button>
+        </div>
+      </div>
+      <div class="chatbox__button">
+        <button><img src="./images/chatbox-icon.svg" /></button>
+      </div>
+    </div>
+
+    <div class="website-link">
+      <a href="https://labyrinthos.co/blogs/tarot-card-meanings-list" target="_blank">Tarot Card Meanings List</a>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+  <script src="./search/index.js"></script>
+  <script>
+    document.getElementById("toggle").addEventListener("change", function () {
+      const iframe = document.getElementById("iframe");
+      const container = document.querySelector(".container");
+      if (this.checked) {
+        container.style.display = "block";
+        iframe.style.display = "none";
+        setTimeout(() => {
+          iframe.style.visibility = "hidden";
+          iframe.style.opacity = "0";
+          container.style.opacity = 1;
+          container.style.visibility = "visible";
+        }, 10);
+      } else {
+        iframe.style.display = "block";
+        container.style.display = "none";
+        setTimeout(() => {
+          container.style.visibility = "hidden";
+          container.style.opacity = "0";
+          iframe.style.opacity = 1;
+          iframe.style.visibility = "visible";
+        }, 10);
+      }
+    });
+    function getCurrentDateArray() {
+      const today = new Date();
+      const day = today.getDate(); // 获取日期
+      const month = today.getMonth();
+      const year = today.getFullYear(); // 获取年份
+
+      return day + "_" + month + "_" + year + "_";
+    }
+
+    const currentDateArray = getCurrentDateArray();
+    // console.log();
+    window.addEventListener("message", function (event) {
+      let value = event.data;
+      if (currentDateArray == value.key) {
+        document.getElementById("toggle").checked = true; // 设置为选中状态
+        toggle.dispatchEvent(new Event("change"));
+      } else {
+        // 获取模态模板并克隆其内容
+        const modalTemplate = document.getElementById("modalTemplate");
+        const modalClone = modalTemplate.content.cloneNode(true);
+        const modalContainer = modalClone.querySelector(".modal-container");
+        const modal_ = modalClone.querySelector(".modal");
+        // 将模态窗口添加到 body 中
+        document.body.appendChild(modalClone);
+        const modal__gallery = modalClone.querySelector(".modal__gallery");
+
+        setTimeout(() => {
+          modalContainer.classList.add("show"); // 添加 show 类以触发动画
+        }, 10); //
+        modalContainer.addEventListener("click", function (event) {
+          // 检查点击的元素是否在模态框内部
+          const isClickInsideModal = modal_.contains(event.target);
+          // console.log(
+          //   "🚀 ~ file: base.html:461 ~ isClickInsideModal:",
+          //   isClickInsideModal
+          // );
+
+          // 如果点击的是模态框外部，则移除模态框或隐藏它
+          if (!isClickInsideModal) {
+            // console.log(isClickInsideModal);
+            modalContainer.classList.remove("show"); // 触发淡出动画
+            setTimeout(() => {
+              modalContainer.remove(); // 彻底移除模态框
+            }, 500); // 与淡出动画时间保持一致
+          }
+        });
+        // window.
+
+        // 现在模态已经被插入到 DOM，可以获取并操作图片容器
+        const imageContainers = modalContainer.querySelectorAll(
+          ".modal__image-container"
+        );
+
+        // 假设 `value.imageData` 是包含图片信息的数组
+
+        // 遍历每个图片容器并更新数据
+        imageContainers.forEach((container, index) => {
+          const imgElement = container.querySelector("img");
+          const captionElement = container.querySelector(".modal__caption");
+          // 动态更新图片和注解
+          imgElement.src = value.imageData[index].img;
+          imgElement.alt = `Image ${index + 1}`; // 更新 alt 属性
+          // console.log();
+          let t_;
+
+          if (value.imageData[index].text.length == 0) {
+            let fileName = value.imageData[index].img.replace(
+              /^cards\/|\.jpg$/g,
+              ""
+            );
+            try {
+              t_ = generateText(fileName);
+            } catch (error) {
+              t_ = "Sorry, no matching tarot card found.";
+            }
+            let zz = JSON.parse(window.localStorage.getItem(value.parent));
+            zz[value.key][index].text = t_;
+            window.localStorage.setItem(value.parent, JSON.stringify(zz));
+          } else {
+            t_ = value.imageData[index].text;
+          }
+          captionElement.textContent = `${t_}`;
+        });
+        document
+          .getElementById("downloadPDF")
+          .addEventListener("click", function () {
+            const modalContent = document.querySelector(".modal__gallery"); // 获取模态窗口内容
+            const dateElement = document.createElement("p");
+            let dd = value.key.split("_");
+            const currentDate = `${dd[2]}/${dd[1]}/${dd[0]}`;
+            dateElement.textContent = `Generation date: ${currentDate}`;
+            dateElement.classList.add("current-date"); // 给元素加上类名，方便后面删除
+            modalContent.insertBefore(dateElement, modalContent.firstChild);
+
+            const captions = document.querySelectorAll(".modal__caption");
+            captions.forEach((caption) => {
+              caption.style.color = "black"; // 改变颜色为黑色
+            });
+            setTimeout(() => {
+              captions.forEach((caption) => {
+                caption.style.color = "white"; // 颜色改回白色
+              });
+            }, 1000); // 1000 毫秒 = 1 秒
+            // 将日期元素插入到模态内容的开头
+            // 将日期元素添加到模态内容的末尾
+            html2pdf()
+              .from(modalContent) // 传入 HTML 元素
+              .set({
+                margin: 1,
+                filename: "modal-content.pdf",
+                html2canvas: { scale: 2 }, // 提高图片质量
+                jsPDF: {
+                  unit: "in",
+                  format: "letter",
+                  orientation: "portrait",
+                },
+              })
+              .save()
+              .then(() => {
+                // 导出完成后，删除日期元素
+                dateElement.remove();
+              }); // 下载 PDF
+          });
+        // 显示模态窗口
+        modalContainer.style.display = "flex";
+
+        // 关闭模态窗口
+        const closeModalBtn = modalContainer.querySelector(".link-2");
+        closeModalBtn.addEventListener("click", function () {
+          modalContainer.remove(); // 从 DOM 中移除模态窗口
+        });
+        // console.log(2);
+      }
+    });
+    window.addEventListener("load", function () {
+      const content = document.getElementById("iframe");
+      content.classList.add("show"); // 添加 show 类触发动画
+    });
+  </script>
+</body>
+
+</html>

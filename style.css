@@ -1,0 +1,736 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  transition: all 0.3s ease;
+}
+
+body {
+  font-family: "Nunito", sans-serif;
+  font-weight: 400;
+  font-size: 100%;
+  background: #1e1e2d;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+html {
+  --primaryGradient: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  --secondaryGradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --primaryBoxShadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
+  --secondaryBoxShadow: 0px -10px 20px rgba(0, 0, 0, 0.3);
+  --primary: #667eea;
+  --textColor: #e6e6e6;
+  --inputBackground: rgba(255, 255, 255, 0.2);
+}
+
+h1 {
+  color: var(--textColor);
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.Lunar_eclipse {
+  position: absolute;
+  background-color: #fff;
+  width: 80px;
+  height: 80px;
+  background: url("./images/sol\(已去底\).jpeg") no-repeat center center;
+  background-size: contain;
+  top: 8%;
+  right: 5%;
+  border-radius: 50%; /* 圆角效果 */
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.chatbox {
+  position: relative;
+  width: 450px;
+  max-width: 100%;
+  border-radius: 15px;
+  box-shadow: var(--primaryBoxShadow);
+  overflow: hidden;
+  background: #2c2c3e;
+  z-index: 1000;
+}
+
+.chatbox__support {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 650px;
+  opacity: 1;
+}
+
+.chatbox__button {
+  text-align: right;
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+}
+
+.chatbox__button button {
+  padding: 15px;
+  background: var(--primaryGradient);
+  border: none;
+  border-radius: 50px;
+  box-shadow: var(--primaryBoxShadow);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.chatbox__button button:hover {
+  transform: scale(1.05);
+}
+
+.chatbox__header {
+  background: var(--primaryGradient);
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #444;
+  box-shadow: var(--secondaryBoxShadow);
+}
+
+.chatbox__image--header {
+  margin-right: 15px;
+}
+
+.chatbox__heading--header {
+  font-size: 1.3rem;
+  color: var(--textColor);
+  margin-bottom: 5px;
+}
+
+.chatbox__description--header {
+  font-size: 0.9rem;
+  color: var(--textColor);
+  opacity: 0.7;
+}
+
+.chatbox__messages {
+  padding: 20px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column-reverse;
+  overflow-y: scroll;
+  background: #2c2c3e;
+  color: var(--textColor);
+  display: flex;
+  flex-direction: column-reverse;
+  overflow-y: scroll;
+  padding: 20px;
+  flex-grow: 1;
+  background: #2c2c3e;
+  color: var(--textColor);
+  overflow-x: hidden; /* 禁止水平滚动条 */
+}
+
+.messages__item {
+  background: #4c4c66;
+  width: fit-content;
+  margin-bottom: 10px;
+  padding: 12px 18px;
+  border-radius: 20px;
+  word-break: break-word;
+  color: var(--textColor);
+  box-shadow: var(--primaryBoxShadow);
+  transition: background 0.3s;
+}
+
+.messages__item:hover {
+  background: #555577;
+}
+
+.messages__item--operator {
+  align-self: flex-end;
+  background-color: var(--primary);
+  color: white;
+}
+
+.messages__item--visitor {
+  align-self: flex-start;
+  background-color: #4c4c66;
+}
+
+.chatbox__footer {
+  background: var(--secondaryGradient);
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--secondaryBoxShadow);
+}
+
+.chatbox__footer input {
+  width: 80%;
+  border: none;
+  padding: 12px 15px;
+  border-radius: 30px;
+  background: var(--inputBackground);
+  color: var(--textColor);
+  outline: none;
+}
+
+.chatbox__footer input::placeholder {
+  color: #d1d1d1;
+}
+
+.chatbox__footer input:focus {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.chatbox__send--footer {
+  padding: 10px 20px;
+  background: var(--primaryGradient);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: var(--primaryBoxShadow);
+  transition: background 0.3s;
+}
+
+.chatbox__send--footer:hover {
+  background: var(--secondaryGradient);
+}
+
+.website-link {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.website-link a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.website-link a:hover {
+  text-decoration: underline;
+  color: var(--secondaryGradient);
+}
+/* 自定义滚动条样式（适用于 Webkit 浏览器，如 Chrome、Safari） */
+.chatbox__messages::-webkit-scrollbar {
+  width: 8px; /* 设置滚动条宽度 */
+}
+
+.chatbox__messages::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1); /* 设置滚动条轨道背景为半透明 */
+  border-radius: 10px; /* 圆角边框 */
+}
+
+.chatbox__messages::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.4); /* 设置滚动条滑块为半透明 */
+  border-radius: 10px; /* 圆角滑块 */
+  border: 2px solid rgba(44, 44, 62, 0.8); /* 滑块内边框（增强视觉效果） */
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2); /* 滑块阴影，增加立体感 */
+}
+
+.chatbox__messages::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.6); /* 悬停时滑块的透明度增加 */
+}
+
+/* 针对 Firefox 浏览器的自定义滚动条样式 */
+.chatbox__messages {
+  scrollbar-width: thin; /* 滚动条宽度变细 */
+  scrollbar-color: rgba(255, 255, 255, 0.4) rgba(44, 44, 62, 0.8); /* 滚动条滑块和轨道颜色 */
+}
+/* 消息项基础样式 */
+.messages__item {
+  width: fit-content;
+  max-width: 60%;
+  padding: 12px 18px;
+  margin: 10px;
+  border-radius: 20px;
+  word-break: break-word;
+  color: var(--textColor);
+  box-shadow: var(--primaryBoxShadow);
+  transition: background 0.3s;
+}
+
+/* 用户消息（右侧对齐） */
+.messages__item--operator {
+  background-color: var(--primaryGradient);
+  color: white;
+  float: right; /* 右侧浮动 */
+  clear: both; /* 清除浮动影响 */
+  border-top-right-radius: 0;
+}
+
+/* 对方消息（左侧对齐） */
+.messages__item--visitor {
+  background-color: #4c4c66;
+  float: left; /* 左侧浮动 */
+  clear: both; /* 清除浮动影响 */
+  border-top-left-radius: 0;
+}
+.messages__item--visitor img {
+  /* width: 50%; */
+  width: 100%;
+  height: 50%;
+}
+/* 图片容器样式 */
+.tarot-card-container {
+  display: flex;
+  flex-direction: column; /* 垂直排列图片和解释文本 */
+  align-items: center; /* 水平居中 */
+  margin: 10px; /* 外边距 */
+}
+
+/* 塔罗牌图片样式 */
+.card__item--tarot {
+  width: 100px; /* 设置图片宽度 */
+  height: auto; /* 高度自动保持比例 */
+  border-radius: 8px; /* 圆角 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 阴影效果 */
+}
+
+/* 塔罗牌描述文本样式 */
+.card-description {
+  font-size: 14px; /* 设置字体大小 */
+  color: #444; /* 文本颜色 */
+  text-align: center; /* 居中对齐文本 */
+  margin-top: 5px; /* 上边距 */
+  padding: 5px; /* 内边距 */
+  background-color: rgba(255, 255, 255, 0.9); /* 背景颜色 */
+  border-radius: 4px; /* 圆角 */
+}
+.loading-indicator {
+  position: absolute;
+  left: 60%;
+  bottom: 80px;
+  text-align: center;
+  font-size: 1em;
+  color: #cba0e5;
+  font-weight: bold;
+}
+
+.loading-indicator p {
+  margin: 0;
+}
+.loading-indicator p::before {
+  content: "🔄"; /* 旋转的图标 */
+  display: inline-block;
+  animation: rotate 1s infinite linear;
+  font-size: 1.5em;
+  margin-right: 10px;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.Lunar_eclipse {
+  cursor: pointer;
+  opacity: 0.5; /* 初始透明度 50% */
+  transition: opacity 0.3s ease-in-out; /* 透明度变化时的过渡效果 */
+}
+
+.Lunar_eclipse:hover {
+  opacity: 1; /* 悬停时透明度变为 100% */
+}
+/* 语音按钮基础样式 */
+.chatbox__voice--footer {
+  padding: 10px;
+  background: var(--primaryGradient);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: var(--primaryBoxShadow);
+  margin-left: 10px;
+  transition: background 0.3s ease, transform 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 按住时的样式变化 */
+.chatbox__voice--footer.recording {
+  background: var(--secondaryGradient);
+  transform: scale(1.2) rotate(360deg); /* 旋转动画 */
+  box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.4);
+  animation: pulse 1.5s infinite; /* 光晕脉动效果 */
+}
+
+/* 按钮悬停时的样式 */
+.chatbox__voice--footer:hover {
+  background: var(--secondaryGradient);
+}
+
+/* 光晕脉动效果 */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 20px rgba(255, 255, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+/* 旋转的动画效果 */
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.chatbox__button button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+}
+.messages__item {
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* From Uiverse.io by MuhammadHasann */
+.toggle-cont {
+  --primary: #54a8fc;
+  --light: #d9d9d9;
+  --dark: #121212;
+  --gray: #414344;
+
+  z-index: 10;
+
+  width: fit-content;
+  height: 50px;
+
+  border-radius: 9999px;
+  position: fixed;
+  top: 30px;
+  right: 30px;
+}
+
+.toggle-cont .toggle-input {
+  display: none;
+}
+
+.toggle-cont .toggle-label {
+  --gap: 5px;
+  --width: 50px;
+
+  cursor: pointer;
+
+  position: relative;
+  display: inline-block;
+
+  padding: 0.5rem;
+  width: calc((var(--width) + var(--gap)) * 2);
+  height: 100%;
+  background-color: var(--dark);
+
+  border: 1px solid #777777;
+  border-bottom: 0;
+
+  border-radius: 9999px;
+  box-sizing: content-box;
+  transition: all 0.3s ease-in-out;
+}
+
+.toggle-label::before {
+  content: "";
+
+  position: absolute;
+  z-index: -10;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: calc(100% + 1.5rem);
+  height: calc(100% + 1.5rem);
+  background-color: var(--gray);
+
+  border: 1px solid #777777;
+  border-bottom: 0;
+  border-radius: 9999px;
+
+  transition: all 0.3s ease-in-out;
+}
+
+.toggle-label::after {
+  content: "";
+
+  position: absolute;
+  z-index: -10;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(
+    circle at 50% -100%,
+    rgb(58, 155, 252) 0%,
+    rgba(12, 12, 12, 1) 80%
+  );
+
+  border-radius: 9999px;
+}
+
+.toggle-cont .toggle-label .cont-icon {
+  position: relative;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  position: relative;
+  width: var(--width);
+  height: 50px;
+  background-image: radial-gradient(
+    circle at 50% 0%,
+    #666666 0%,
+    var(--gray) 100%
+  );
+
+  border: 1px solid #aaaaaa;
+  border-bottom: 0;
+  border-radius: 9999px;
+  box-shadow: inset 0 -0.15rem 0.15rem var(--primary),
+    inset 0 0 0.5rem 0.75rem var(--second);
+
+  transition: transform 0.3s ease-in-out;
+}
+
+.cont-icon {
+  overflow: clip;
+  position: relative;
+}
+
+.cont-icon .sparkle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  display: block;
+
+  width: calc(var(--width) * 1px);
+  aspect-ratio: 1;
+  background-color: var(--light);
+
+  border-radius: 50%;
+  transform-origin: 50% 50%;
+  rotate: calc(1deg * var(--deg));
+  transform: translate(-50%, -50%);
+  animation: sparkle calc(100s / var(--duration)) linear
+    calc(0s / var(--duration)) infinite;
+}
+
+@keyframes sparkle {
+  to {
+    width: calc(var(--width) * 0.5px);
+    transform: translate(2000%, -50%);
+  }
+}
+
+.cont-icon .icon {
+  width: 1.1rem;
+  fill: var(--light);
+}
+
+.toggle-cont:has(.toggle-input:checked) {
+  --checked: true;
+}
+
+@container style(--checked: true) {
+  .toggle-cont .toggle-label {
+    background-color: #41434400;
+
+    border: 1px solid #3d6970;
+    border-bottom: 0;
+  }
+
+  .toggle-cont .toggle-label::before {
+    box-shadow: 0 1rem 2.5rem -2rem #0080ff;
+  }
+
+  .toggle-cont .toggle-label .cont-icon {
+    overflow: visible;
+
+    background-image: radial-gradient(
+      circle at 50% 0%,
+      #045ab1 0%,
+      var(--primary) 100%
+    );
+
+    border: 1px solid var(--primary);
+    border-bottom: 0;
+
+    transform: translateX(calc((var(--gap) * 2) + 100%)) rotate(-225deg);
+  }
+
+  .toggle-cont .toggle-label .cont-icon .sparkle {
+    z-index: -10;
+
+    width: calc(var(--width) * 1.5px);
+    background-color: #acacac;
+
+    animation: sparkle calc(100s / var(--duration)) linear
+      calc(10s / var(--duration)) infinite;
+  }
+
+  @keyframes sparkle {
+    to {
+      width: calc(var(--width) * 1px);
+      transform: translate(5000%, -50%);
+    }
+  }
+}
+.checkbox-wrapper * {
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+.checkbox-wrapper input[type="checkbox"] {
+  display: none;
+}
+
+.checkbox-wrapper label {
+  --size: 50px;
+  --shadow: calc(var(--size) * 0.07) calc(var(--size) * 0.1);
+  position: relative;
+  display: block;
+  width: var(--size);
+  height: var(--size);
+  margin: 0 auto;
+  background-color: #4158d0;
+  background-image: linear-gradient(
+    43deg,
+    #4158d0 0%,
+    #c850c0 46%,
+    #ffcc70 100%
+  );
+  border-radius: 50%;
+  box-shadow: 0 var(--shadow) #ffbeb8;
+  cursor: pointer;
+  transition: 0.2s ease transform, 0.2s ease background-color,
+    0.2s ease box-shadow;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.checkbox-wrapper label:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: 0;
+  width: calc(var(--size) * 0.7);
+  height: calc(var(--size) * 0.7);
+  margin: 0 auto;
+  background-color: #fff;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  box-shadow: inset 0 var(--shadow) #ffbeb8;
+  transition: 0.2s ease width, 0.2s ease height;
+}
+
+.checkbox-wrapper label:hover:before {
+  width: calc(var(--size) * 0.55);
+  height: calc(var(--size) * 0.55);
+  box-shadow: inset 0 var(--shadow) #ff9d96;
+}
+
+.checkbox-wrapper label:active {
+  transform: scale(0.9);
+}
+
+.checkbox-wrapper .tick_mark {
+  position: absolute;
+  top: -1px;
+  right: 0;
+  left: calc(var(--size) * -0.05);
+  width: calc(var(--size) * 0.6);
+  height: calc(var(--size) * 0.6);
+  margin: 0 auto;
+  margin-left: calc(var(--size) * 0.14);
+  transform: rotateZ(-40deg);
+}
+
+.checkbox-wrapper .tick_mark:before,
+.checkbox-wrapper .tick_mark:after {
+  content: "";
+  position: absolute;
+  background-color: #fff;
+  border-radius: 2px;
+  opacity: 0;
+  transition: 0.2s ease transform, 0.2s ease opacity;
+}
+
+.checkbox-wrapper .tick_mark:before {
+  left: 0;
+  bottom: 0;
+  width: calc(var(--size) * 0.1);
+  height: calc(var(--size) * 0.3);
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.23);
+  transform: translateY(calc(var(--size) * -0.68));
+}
+
+.checkbox-wrapper .tick_mark:after {
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: calc(var(--size) * 0.1);
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.23);
+  transform: translateX(calc(var(--size) * 0.78));
+}
+
+.checkbox-wrapper input[type="checkbox"]:checked + label {
+  background-color: #4158d0;
+  background-image: linear-gradient(
+    43deg,
+    #4158d0 0%,
+    #c850c0 46%,
+    #ffcc70 100%
+  );
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px,
+    rgba(0, 0, 0, 0.22) 0px 15px 12px;
+}
+
+.checkbox-wrapper input[type="checkbox"]:checked + label:before {
+  width: 0;
+  height: 0;
+}
+
+.checkbox-wrapper input[type="checkbox"]:checked + label .tick_mark:before,
+.checkbox-wrapper input[type="checkbox"]:checked + label .tick_mark:after {
+  transform: translate(0);
+  opacity: 1;
+}
