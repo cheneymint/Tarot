@@ -1,2 +1,3 @@
 /reading   /reading.html    301
 /api/*   http://49.232.237.78:1273/api/:splat   200
+/*    /:splat.html    200
