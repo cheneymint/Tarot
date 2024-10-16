@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Full Screen Calendar</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100vh;
+        margin: 0;
+        background-color: #333;
+      }
+
+      .calendar {
+        background-color: #222;
+        color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .value {
+        position: relative;
+        right: 0;
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-start;
+        background-image: url("./images/image.png");
+        /* 替换为你的图片路径 */
+        background-size: cover;
+        /* 使图片覆盖整个元素 */
+        background-position: center center;
+        /* 图片居中 */
+        background-repeat: no-repeat;
+      }
+
+      .value span {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        color: #555;
+        text-align: right;
+      }
+
+      .value img {
+        width: 30%;
+        height: 100%;
+        margin: 3px;
+        padding-right: 3px;
+        border-radius: 5px;
+      }
+
+      .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 1.5em;
+        margin-bottom: 20px;
+        padding: 0 20px;
+      }
+
+      .calendar-controls {
+        display: flex;
+        align-items: center;
+      }
+
+      #selectedDate {
+        margin: 0 15px;
+        font-size: 1.2em;
+        font-weight: bold;
+      }
+
+      .calendar-header button {
+        background-color: #555;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        border-radius: 5px;
+        font-size: 1em;
+      }
+
+      .calendar-header button:hover {
+        background-color: #777;
+      }
+
+      .calendar-weekdays,
+      .calendar-dates {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        text-align: center;
+        flex-grow: 1;
+      }
+
+      .calendar-weekdays {
+        font-size: 1.5em;
+        padding-bottom: 10px;
+      }
+
+      .calendar-dates {
+        font-size: 1.2em;
+      }
+
+      .calendar-weekdays div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .calendar-dates div {
+        height: 14vh;
+        padding: 20px;
+        border-radius: 5px;
+        margin: 5px;
+        background-color: #333;
+      }
+
+      .value {
+        text-align: right;
+      }
+      .value:hover {
+        animation: dance 1s infinite ease-in-out;
+      }
+      @keyframes dance {
+        0% {
+          transform: rotate(0deg);
+        }
+        25% {
+          transform: rotate(15deg);
+        }
+        50% {
+          transform: rotate(-15deg);
+        }
+        75% {
+          transform: rotate(10deg);
+        }
+        100% {
+          transform: rotate(0deg);
+        }
+      }
+      .calendar-dates div.today {
+        background-color: #d5a72a;
+        color: #fff;
+      }
+
+      .calendar-dates div.selected {
+        background-color: #d14e4e;
+        color: #fff;
+      }
+
+      .calendar-dates div:hover {
+        background-color: #d14e4e;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="calendar">
+      <div class="calendar-header">
+        <div id="monthYear">October 2024</div>
+        <div class="calendar-controls">
+          <button id="prevMonth">«</button>
+          <div id="selectedDate">No date selected</div>
+          <button id="nextMonth">»</button>
+        </div>
+      </div>
+      <div class="calendar-body">
+        <div class="calendar-weekdays">
+          <div>Sun</div>
+          <div>Mon</div>
+          <div>Tue</div>
+          <div>Wed</div>
+          <div>Thu</div>
+          <div>Fri</div>
+          <div>Sat</div>
+        </div>
+        <div class="calendar-dates">
+          <!-- Calendar dates will be populated here -->
+        </div>
+      </div>
+    </div>
+    <script src="./search/index.js"></script>
+
+    <script>
+      window.onload = async function () {
+        let cardImages = [];
+        let isUpdate = false;
+        async function getData() {
+          try {
+            const response = await fetch(
+              "../standalone-frontend/card_data.json"
+            );
+            const data = await response.json();
+
+            cardImages = data.cards;
+          } catch (error) {
+            console.error("Error loading card data:", error);
+          }
+        }
+        await getData();
+        // function getNowData (today_) {
+
+        // }
+        // getNowData()
+        // if (!hasLocal) {
+        // 	await getData();
+        // }
+        // 等待数据加载完成
+
+        const monthNames = [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+        ];
+        const today = new Date();
+        let currentMonth = today.getMonth();
+        let currentYear = today.getFullYear();
+        let selectedDate = null;
+
+        const monthYear = document.getElementById("monthYear");
+        const datesContainer = document.querySelector(".calendar-dates");
+        const selectedDateElement = document.getElementById("selectedDate");
+
+        // 初始化日历
+        function initCalendar(month, year) {
+          // console.log("🚀 ~ file: test.html:222 ~ month:", month);
+          let isUpdate = false;
+
+          let hasLocal = window.localStorage.getItem(month);
+          if (!hasLocal) isUpdate = true;
+
+          // console.log();
+
+          selectedDateElement.innerHTML = "No date selected";
+          datesContainer.innerHTML = "";
+          monthYear.textContent = `${monthNames[month]} ${year}`;
+
+          const firstDay = new Date(year, month).getDay();
+          const daysInMonth = 32 - new Date(year, month, 32).getDate();
+
+          for (let i = 0; i < firstDay; i++) {
+            datesContainer.innerHTML += `<div></div>`;
+          }
+          let dateImages = {};
+
+          for (let i = 1; i <= daysInMonth; i++) {
+            const dateDiv = document.createElement("div");
+            let key = i + "_" + month + "_" + year + "_";
+            dateDiv.textContent = i;
+            dateDiv.classList.add("value");
+            dateDiv.innerHTML = `<span>${i}</span>`;
+            dateImages[key] = {};
+            const currentDate = new Date(); // 获取当前日期对象
+            const yesterday = new Date(currentDate); // 复制当前日期
+            yesterday.setDate(currentDate.getDate() - 1); // 将日期设为昨天
+            const cardDate = new Date(currentYear, currentMonth, i);
+
+            if (isUpdate) {
+              for (let j = 0; j < 3; j++) {
+                dateImages[key][j] = {};
+                if (cardDate < yesterday) {
+                  const randomIndex = Math.floor(
+                    Math.random() * cardImages.length
+                  );
+                  const img = document.createElement("img");
+                  const imagePath =
+                    "cards/" + cardImages[randomIndex].name + ".jpg";
+                  img.src = imagePath;
+                  img.onerror = function () {
+                    // 可以设置一个默认的占位图片
+                    const randomIndex = Math.floor(
+                      Math.random() * cardImages.length
+                    );
+                    const imagePath =
+                      "cards/" + cardImages[randomIndex].name + ".jpg";
+                    img.src = imagePath;
+                    dateImages[key][j].img = imagePath;
+                    dateImages[key][j].text = cardImages[randomIndex].desc;
+                  };
+                  dateImages[key][j].text = cardImages[randomIndex].desc;
+                  dateImages[key][j].img = imagePath;
+                  dateDiv.appendChild(img);
+                }
+              }
+              localStorage.setItem(month, JSON.stringify(dateImages));
+            } else {
+              today.setHours(0, 0, 0, 0);
+              dateImages = hasLocal ? JSON.parse(hasLocal) : {};
+              if (cardDate < yesterday) {
+                Object.values(dateImages[key]).forEach((imagePath) => {
+                  if (imagePath.img) {
+                    const img = document.createElement("img");
+                    img.src = imagePath.img;
+                    dateDiv.appendChild(img);
+                  }
+                });
+              } else {
+                Object.values(dateImages[key]).forEach((imagePath) => {
+                  if (imagePath.img) {
+                    const img = document.createElement("img");
+                    img.src = "./component/" + imagePath.img;
+                    dateDiv.appendChild(img);
+                  }
+                });
+                // console.log(22);
+              }
+            }
+
+            if (
+              i === today.getDate() &&
+              year === today.getFullYear() &&
+              month === today.getMonth()
+            ) {
+              dateDiv.classList.add("today");
+            }
+
+            dateDiv.addEventListener("click", () => {
+              selectDate(i, month, year);
+              let key = i + "_" + month + "_" + year + "_";
+
+              // console.log(cardDate, yesterday);
+              if (cardDate <= yesterday) {
+                window.parent.postMessage({
+                  parent: month,
+                  key: key,
+                  imageData: dateImages[key],
+                });
+              } else if (
+                i === today.getDate() &&
+                year === today.getFullYear() &&
+                month === today.getMonth()
+              ) {
+                window.parent.postMessage({
+                  parent: month,
+                  key: key,
+                  imageData: dateImages[key],
+                });
+              }
+            });
+
+            datesContainer.appendChild(dateDiv);
+          }
+        }
+
+        // 选择日期
+        function selectDate(day, month, year) {
+          const allDates = document.querySelectorAll(".calendar-dates div");
+          allDates.forEach((date) => date.classList.remove("selected"));
+
+          selectedDate = new Date(year, month, day);
+          selectedDateElement.textContent = `${monthNames[month]} ${day}, ${year}`;
+
+          const selectedDateDiv = Array.from(allDates).find(
+            (date) => date.textContent == day
+          );
+          if (selectedDateDiv) {
+            selectedDateDiv.classList.add("selected");
+          }
+        }
+
+        // 切换到上一个月
+        document.getElementById("prevMonth").addEventListener("click", () => {
+          currentMonth--;
+          if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+          }
+          initCalendar(currentMonth, currentYear);
+        });
+
+        // 切换到下一个月
+        document.getElementById("nextMonth").addEventListener("click", () => {
+          currentMonth++;
+          if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+          }
+          initCalendar(currentMonth, currentYear);
+        });
+
+        // 初始化显示当前月份
+        initCalendar(currentMonth, currentYear);
+      };
+    </script>
+  </body>
+</html>

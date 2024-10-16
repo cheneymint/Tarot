@@ -1,0 +1,160 @@
+html {
+  scroll-behavior: smooth;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  background-color: #111111;
+  overflow-x: hidden;
+}
+
+section {
+  background-color: #0e221a;
+  padding: 50px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.suit-summary {
+  font-family: "Source Serif Pro", serif;
+  font-size: 20px;
+  margin: 20px;
+  color: white;
+  width: 60%;
+  text-align: center;
+}
+
+.suit-summary h1 {
+  font-family: "Cinzel", serif;
+  font-size: 50px;
+  color: white;
+  margin: 0;
+}
+
+span {
+  color: #9c772c;
+}
+
+nav {
+  width: 100%;
+  border: 1px solid rgb(65, 65, 65);
+  padding: 20px;
+  background-color: #111111;
+}
+
+nav a {
+  float: left;
+  text-decoration: none;
+  font-family: "Cinzel", serif;
+  font-size: 20px;
+  color: white;
+  padding: 10px;
+  transition: 0.3s;
+  margin-left: 30px;
+}
+
+nav a:hover {
+  color: #9c772c;
+  border-color: #9c772c;
+}
+
+.button {
+  float: right;
+  margin-right: 30px;
+  padding: 10px;
+  color: white;
+  border: 1px solid white;
+  border-radius: 5px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.button:hover {
+  color: #9c772c;
+}
+
+/* The sticky class is added to the navbar with JS when it reaches its scroll position */
+.sticky {
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  width: 100%;
+}
+
+.sticky + .card-list {
+  padding-top: 60px;
+}
+
+.card-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 40px;
+  padding: 20px;
+  width: 80%;
+}
+
+.card-item {
+  position: relative;
+  margin: 10px;
+}
+
+.image {
+  opacity: 1;
+  transition: 0.5s ease;
+  width: 325px;
+  height: auto;
+  border: 2px solid black;
+  border-radius: 3%;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  padding: 0px 7px;
+  height: auto;
+  top: 0px;
+  bottom: 0px;
+  opacity: 0;
+  transition: 0.5s ease;
+  color: white;
+  font-size: 15px;
+  text-align: center;
+  font-family: "Cinzel", serif;
+}
+
+.card-item:hover .image {
+  opacity: 0.2;
+}
+
+.card-content:hover {
+  opacity: 1;
+}
+
+.card-content h3 {
+  font-weight: normal;
+  font-size: 20px;
+  margin: 0px;
+}
+
+.flavor-text {
+  font-family: "Source Serif Pro", serif;
+  font-size: 14px;
+  font-style: italic;
+}
+
+.card-summary {
+  font-family: "Source Serif Pro", serif;
+  font-size: 16px;
+}
